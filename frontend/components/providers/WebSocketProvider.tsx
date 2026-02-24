@@ -21,41 +21,32 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
   const mountedRef = useRef(true);
   const drawHandlerRef = useRef<BinaryDrawHandler | null>(null);
 
-  const {
-    setConnected,
-    setPlayers,
-    setPhase,
-    setRoomId,
-    setPlayerId,
-    setCurrentRound,
-    setTimeLeft,
-    setWordHint,
-    setWordChoices,
-    setCurrentDrawerId,
-    addMessage,
-  } = useGameStore();
-
   const connect = useCallback(() => {
     if (typeof window === 'undefined') return;
     if (!mountedRef.current) return;
     if (socketRef.current?.readyState === WebSocket.OPEN) return;
     if (socketRef.current?.readyState === WebSocket.CONNECTING) return;
 
+    const {
+      setConnected, setPlayers, setPhase, setRoomId, setPlayerId,
+      setCurrentRound, setTimeLeft, setWordHint, setWordChoices,
+      setCurrentDrawerId, addMessage,
+    } = useGameStore.getState();
+
     console.log('[WS] Connecting to', WS_URL);
     const ws = new WebSocket(WS_URL);
-    // Tell browser to receive binary as ArrayBuffer (not Blob)
     ws.binaryType = 'arraybuffer';
     socketRef.current = ws;
 
     ws.onopen = () => {
       if (!mountedRef.current) { ws.close(1000); return; }
       console.log('[WS] Connected');
-      setConnected(true);
+      useGameStore.getState().setConnected(true);
     };
 
     ws.onclose = (event) => {
       console.log('[WS] Closed', event.code, event.reason);
-      setConnected(false);
+      useGameStore.getState().setConnected(false);
       socketRef.current = null;
       if (mountedRef.current && event.code !== 1000) {
         reconnectTimeoutRef.current = setTimeout(connect, 3000);
@@ -67,7 +58,6 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
     };
 
     ws.onmessage = (event) => {
-      // Binary draw data — route directly to canvas handler
       if (event.data instanceof ArrayBuffer) {
         drawHandlerRef.current?.(event.data);
         return;
@@ -94,9 +84,7 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
             break;
 
           case EVENTS.NEXT_ROUND:
-            // Sent to non-drawers: X is choosing a word
             console.log('[WS] NEXT_ROUND received:', data);
-            console.log('[WS] Setting phase to choosing, drawerId:', data.drawerId);
             setCurrentDrawerId(data.drawerId);
             setCurrentRound(data.round);
             setWordHint('');
@@ -110,12 +98,9 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
             break;
 
           case EVENTS.ROUND_START:
-            // Broadcast to ALL players after drawer picks word
             console.log('[WS] ROUND_START received:', data);
-            console.log('[WS] Setting phase to drawing, round:', data.round, 'drawerId:', data.drawerId);
             setPhase('drawing');
             setCurrentRound(data.round);
-            // Only update drawerId for non-drawers (drawer already set it in WORD_CHOICES)
             if (data.drawerId) setCurrentDrawerId(data.drawerId);
             setWordHint(data.wordHint ?? '');
             setWordChoices(null);
@@ -128,26 +113,19 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
             break;
 
           case EVENTS.WORD_CHOICES: {
-            // Only sent to the drawer — set self as drawer
             const myId = useGameStore.getState().playerId;
-            console.log('[WS] ========== WORD_CHOICES RECEIVED ==========');
-            console.log('[WS] Words:', data.words);
-            console.log('[WS] My playerId:', myId);
-            console.log('[WS] Setting currentDrawerId to:', myId);
-            console.log('[WS] Setting phase to: choosing');
+            console.log('[WS] WORD_CHOICES received, words:', data.words, 'myId:', myId);
             setCurrentDrawerId(myId);
             setWordChoices(data.words);
             setPhase('choosing');
-            // Verify state was set
             setTimeout(() => {
               const state = useGameStore.getState();
-              console.log('[WS] After WORD_CHOICES - phase:', state.phase, 'wordChoices:', state.wordChoices, 'isDrawer:', state.isDrawer());
+              console.log('[WS] After WORD_CHOICES - phase:', state.phase, 'isDrawer:', state.isDrawer());
             }, 100);
             break;
           }
 
           case EVENTS.WORD_SELECTED:
-            // Drawer gets their word confirmed
             useGameStore.getState().setSelectedWord(data);
             break;
 
@@ -164,7 +142,6 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
               type: 'correct',
               timestamp: Date.now(),
             });
-            // Update score and hasGuessed in player list immediately
             setPlayers(
               useGameStore.getState().players.map(p =>
                 p.id === data.playerId
@@ -186,12 +163,11 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
             break;
 
           case EVENTS.CLEAR_CANVAS:
-            // Signal canvas to clear — reuse draw handler with a special 1-byte signal
             drawHandlerRef.current?.(new ArrayBuffer(0));
             break;
 
           case EVENTS.ROUND_END:
-            console.log('[WS] ROUND_END received, setting phase to roundEnd');
+            console.log('[WS] ROUND_END received');
             setPhase('roundEnd');
             setPlayers(data.scores);
             addMessage({
@@ -219,11 +195,7 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
         console.error('[WS] Parse error:', err);
       }
     };
-  }, [
-    setConnected, setPlayers, setPhase, setRoomId, setPlayerId,
-    setCurrentRound, setTimeLeft, setWordHint, setWordChoices,
-    setCurrentDrawerId, addMessage,
-  ]);
+  }, []);
 
   useEffect(() => {
     mountedRef.current = true;
