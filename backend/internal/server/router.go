@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/anshul/scrrblIX/internal/room"
@@ -76,7 +77,20 @@ func (s *Server) handleWebSocket(c *gin.Context) {
 	s.Hub.Register <- client
 
 	go client.WritePump()
+
+	// Send the client their own ID immediately
+	connectMsg := websocket.Message{
+		Type: "connect",
+		Data: mustMarshal(map[string]string{"playerId": clientID}),
+	}
+	client.SendMessage(connectMsg)
+
 	go client.ReadPump()
+}
+
+func mustMarshal(v interface{}) json.RawMessage {
+	data, _ := json.Marshal(v)
+	return data
 }
 
 func (s *Server) Run(addr string) error {

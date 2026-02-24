@@ -37,6 +37,9 @@ interface GameState {
   setCurrentDrawerId: (id: string | null) => void;
   setSelectedWord: (word: string | null) => void;
   
+  // Computed
+  isDrawer: () => boolean;
+  
   // Chat
   messages: ChatMessage[];
   addMessage: (message: ChatMessage) => void;
@@ -46,7 +49,7 @@ interface GameState {
   resetGame: () => void;
 }
 
-export const useGameStore = create<GameState>((set) => ({
+export const useGameStore = create<GameState>((set, get) => ({
   // Connection
   connected: false,
   setConnected: (connected) => set({ connected }),
@@ -82,10 +85,16 @@ export const useGameStore = create<GameState>((set) => ({
   setCurrentDrawerId: (currentDrawerId) => set({ currentDrawerId }),
   setSelectedWord: (selectedWord) => set({ selectedWord }),
   
+  // Computed
+  isDrawer: () => {
+    const state = get();
+    return state.playerId !== null && state.playerId === state.currentDrawerId;
+  },
+  
   // Chat
   messages: [],
   addMessage: (message) => set((state) => ({ 
-    messages: [...state.messages, message].slice(-50) // Keep last 50 messages
+    messages: [...state.messages, message].slice(-50)
   })),
   clearMessages: () => set({ messages: [] }),
   

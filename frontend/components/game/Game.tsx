@@ -1,8 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
 import { useGameStore } from '@/stores/gameStore';
-import { useWebSocket } from '@/hooks/useWebSocket';
 import PlayerList from './PlayerList';
 import Chat from './Chat';
 import Canvas from './Canvas';
@@ -10,14 +8,13 @@ import WordSelection from './WordSelection';
 import RoundEnd from './RoundEnd';
 import GameOver from './GameOver';
 import { motion, AnimatePresence } from 'framer-motion';
-import { EVENTS } from '@/lib/constants';
 
 export default function Game() {
-  const { phase, timeLeft, currentRound, totalRounds, wordHint, isDrawer, currentDrawerId, players } = useGameStore();
-  const { sendMessage } = useWebSocket();
+  const { phase, timeLeft, currentRound, totalRounds, wordHint, isDrawer, currentDrawerId, players, selectedWord } = useGameStore();
 
   // Find current drawer name
   const currentDrawer = players.find(p => p.id === currentDrawerId);
+  const amIDrawer = isDrawer();
 
   return (
     <div className="flex h-screen w-full bg-pastel-purple/10 p-4 gap-4 overflow-hidden">
@@ -57,8 +54,8 @@ export default function Game() {
             </div>
             <div className="flex flex-col">
               <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Round {currentRound} of {totalRounds}</span>
-              {phase === 'drawing' && isDrawer ? (
-                <span className="text-lg font-bold text-pastel-purple-deep">Draw: {useGameStore.getState().selectedWord}</span>
+              {phase === 'drawing' && amIDrawer ? (
+                <span className="text-lg font-bold text-pastel-purple-deep">Draw: {selectedWord}</span>
               ) : (
                 <div className="flex gap-2 font-mono text-2xl tracking-widest font-bold text-gray-800">
                   {wordHint.split('').map((char, i) => (
@@ -91,7 +88,7 @@ export default function Game() {
           <Canvas />
           
           <AnimatePresence>
-            {phase === 'choosing' && isDrawer && (
+            {phase === 'choosing' && amIDrawer && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}

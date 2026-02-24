@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useGameStore } from '@/stores/gameStore';
-import { useWebSocket } from '@/hooks/useWebSocket';
+import { useWebSocket } from '@/components/providers/WebSocketProvider';
 import { motion, AnimatePresence } from 'framer-motion';
 import { EVENTS } from '@/lib/constants';
 

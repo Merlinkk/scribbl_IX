@@ -1,5 +1,37 @@
 @import "tailwindcss";
 
+@theme {
+  --color-pastel-purple-light: #E6E6FA;
+  --color-pastel-purple: #DCD0FF;
+  --color-pastel-purple-dark: #B19CD9;
+  --color-pastel-purple-deep: #7B68EE;
+  
+  --color-pastel-pink-light: #FFB6C1;
+  --color-pastel-pink: #FFB7B2;
+  --color-pastel-pink-dark: #FF69B4;
+  
+  --color-pastel-green-light: #98FB98;
+  --color-pastel-green: #E2F0CB;
+  --color-pastel-green-dark: #77DD77;
+  
+  --color-pastel-yellow-light: #FFFACD;
+  --color-pastel-yellow: #FFDAC1;
+  --color-pastel-yellow-dark: #FFD700;
+  
+  --color-pastel-blue-light: #E0FFFF;
+  --color-pastel-blue: #B5EAD7;
+  --color-pastel-blue-dark: #87CEEB;
+
+  --animate-bounce-slow: bounce 3s infinite;
+  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-float: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
 :root {
   --background: #E6E6FA;
   --foreground: #4B0082;
@@ -29,30 +61,64 @@ body {
   background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
 }
 
-@layer components {
-  .pastel-panel {
-    @apply bg-white/90 backdrop-blur-sm rounded-xl border-4 border-pastel-purple-dark shadow-[4px_4px_0px_0px_rgba(177,156,217,1)];
-  }
-  
-  .pastel-button {
-    @apply px-6 py-2 rounded-full font-bold transition-all transform active:scale-95 hover:-translate-y-1 border-b-4;
-  }
-  
-  .btn-primary {
-    @apply bg-pastel-purple-deep text-white border-purple-800 hover:brightness-110;
-  }
-  
-  .btn-secondary {
-    @apply bg-pastel-pink text-white border-pastel-pink-dark hover:brightness-110;
-  }
-  
-  .btn-accent {
-    @apply bg-pastel-green-dark text-white border-green-600 hover:brightness-110;
-  }
+.pastel-panel {
+  background-color: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(4px);
+  border-radius: 0.75rem;
+  border-width: 4px;
+  border-color: #B19CD9;
+  box-shadow: 4px 4px 0px 0px rgba(177,156,217,1);
+}
 
-  .pixel-shadow {
-    box-shadow: 4px 4px 0px 0px rgba(0,0,0,0.1);
-  }
+.pastel-button {
+  padding: 0.5rem 1.5rem;
+  border-radius: 9999px;
+  font-weight: 700;
+  transition: all 0.2s;
+  transform: translateY(0);
+  border-bottom-width: 4px;
+}
+
+.pastel-button:hover {
+  transform: translateY(-4px);
+}
+
+.pastel-button:active {
+  transform: scale(0.95);
+}
+
+.btn-primary {
+  background-color: #7B68EE;
+  color: white;
+  border-color: #5B4ACE;
+}
+
+.btn-primary:hover {
+  filter: brightness(1.1);
+}
+
+.btn-secondary {
+  background-color: #FFB7B2;
+  color: white;
+  border-color: #FF69B4;
+}
+
+.btn-secondary:hover {
+  filter: brightness(1.1);
+}
+
+.btn-accent {
+  background-color: #77DD77;
+  color: white;
+  border-color: #22C55E;
+}
+
+.btn-accent:hover {
+  filter: brightness(1.1);
+}
+
+.pixel-shadow {
+  box-shadow: 4px 4px 0px 0px rgba(0,0,0,0.1);
 }
 
 /* Custom scrollbar */

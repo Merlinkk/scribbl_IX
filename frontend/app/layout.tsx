@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Fredoka } from "next/font/google";
 import "./globals.css";
 import { Toaster } from 'sonner';
+import { WebSocketProvider } from '@/components/providers/WebSocketProvider';
 
 const fredoka = Fredoka({
   variable: "--font-fredoka",
@@ -21,10 +22,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${fredoka.variable} antialiased`}
-      >
-        {children}
+      <body className={`${fredoka.variable} antialiased`}>
+        <WebSocketProvider>
+          {children}
+        </WebSocketProvider>
         <Toaster richColors position="top-center" theme="light" />
       </body>
     </html>
