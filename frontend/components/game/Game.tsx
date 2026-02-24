@@ -10,11 +10,15 @@ import GameOver from './GameOver';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Game() {
-  const { phase, timeLeft, currentRound, totalRounds, wordHint, isDrawer, currentDrawerId, players, selectedWord } = useGameStore();
+  const { phase, timeLeft, currentRound, totalRounds, wordHint, currentDrawerId, players, selectedWord, wordChoices, playerId } = useGameStore();
 
   // Find current drawer name
   const currentDrawer = players.find(p => p.id === currentDrawerId);
-  const amIDrawer = isDrawer();
+  // Compute isDrawer directly to avoid stale closure issues
+  const amIDrawer = playerId !== null && playerId === currentDrawerId;
+
+  // Debug logging
+  console.log('[GAME] Render - phase:', phase, 'amIDrawer:', amIDrawer, 'playerId:', playerId, 'currentDrawerId:', currentDrawerId, 'wordChoices:', wordChoices);
 
   return (
     <div className="flex h-screen w-full bg-pastel-purple/10 p-4 gap-4 overflow-hidden">
@@ -88,25 +92,25 @@ export default function Game() {
           <Canvas />
           
           <AnimatePresence>
-            {phase === 'choosing' && amIDrawer && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="absolute inset-0 z-20 flex items-center justify-center bg-black/50 backdrop-blur-sm"
-              >
-                <WordSelection />
-              </motion.div>
-            )}
-
             {phase === 'roundEnd' && (
               <motion.div
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -50 }}
-                className="absolute inset-0 z-30 flex items-center justify-center bg-black/60 backdrop-blur-md"
+                className="absolute inset-0 z-20 flex items-center justify-center bg-black/60 backdrop-blur-md"
               >
                 <RoundEnd />
+              </motion.div>
+            )}
+
+            {phase === 'choosing' && amIDrawer && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute inset-0 z-30 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+              >
+                <WordSelection />
               </motion.div>
             )}
 

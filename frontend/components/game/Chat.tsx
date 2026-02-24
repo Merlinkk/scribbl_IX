@@ -21,14 +21,8 @@ export default function Chat() {
     e.preventDefault();
     if (!text.trim()) return;
 
-    if (phase === 'drawing') {
-      sendMessage(EVENTS.GUESS, { text });
-    } else {
-      // Just chat
-      // sendMessage(EVENTS.CHAT, { text }); // Backend might handle chat separately or same
-      // For now, treat everything as guess/chat based on backend logic
-      sendMessage(EVENTS.GUESS, { text });
-    }
+    console.log('[CHAT] Sending message:', text, 'phase:', phase);
+    sendMessage(EVENTS.GUESS, { text });
     setText('');
   };
 

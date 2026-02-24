@@ -140,19 +140,25 @@ func (m *Manager) HandleStartGame(client *websocket.Client) error {
 }
 
 func (m *Manager) HandleWordSelected(client *websocket.Client, word string) error {
+	log.Printf("[WORD] HandleWordSelected called by client %s, word=%s", client.ID, word)
+
 	m.mu.RLock()
 	room, exists := m.Rooms[client.RoomID]
 	m.mu.RUnlock()
 
 	if !exists {
+		log.Printf("[WORD] ERROR: room not found for client %s", client.ID)
 		return errors.New("room not found")
 	}
 
+	log.Printf("[WORD] CurrentDrawer=%s, client.ID=%s", room.GameState.CurrentDrawer, client.ID)
 	if room.GameState.CurrentDrawer != client.ID {
+		log.Printf("[WORD] ERROR: client %s is not the drawer (drawer is %s)", client.ID, room.GameState.CurrentDrawer)
 		return errors.New("only drawer can select word")
 	}
 
 	// Start the round with selected word
+	log.Printf("[WORD] Starting round with word: %s", word)
 	room.GameState.StartRound(client.ID, word, constants.RoundDuration)
 
 	// Broadcast round start to all players
@@ -282,28 +288,40 @@ func (m *Manager) BroadcastClearCanvas(roomID string) {
 }
 
 func (m *Manager) startNextRound(room *Room) {
+	log.Printf("[ROUND] startNextRound called for room %s, currentRound=%d, totalRounds=%d",
+		room.ID, room.GameState.CurrentRound, room.GameState.TotalRounds)
+
 	room.ResetRoundState()
 
 	// Check if game is over
 	if room.GameState.IsGameOver() {
+		log.Printf("[ROUND] Game is over, ending game")
 		m.endGame(room)
 		return
 	}
 
 	// Get next drawer
 	drawerID, drawerName := room.GetNextDrawer()
+	log.Printf("[ROUND] Next drawer: ID=%s, Name=%s", drawerID, drawerName)
 	if drawerID == "" {
+		log.Printf("[ROUND] ERROR: No drawer found!")
 		return
 	}
 
+	// Set current drawer in game state so HandleWordSelected can validate
+	room.GameState.CurrentDrawer = drawerID
+	log.Printf("[ROUND] Set GameState.CurrentDrawer = %s", drawerID)
+
 	// Get word choices
 	words := game.GetRandomWords(constants.WordChoiceCount)
+	log.Printf("[ROUND] Word choices: %v", words)
 
 	// Send word choices to drawer
 	choicesMsg := websocket.Message{
 		Type: constants.EventWordChoices,
 		Data: mustMarshal(websocket.WordChoicesData{Words: words}),
 	}
+	log.Printf("[ROUND] Sending word_choices to drawer %s", drawerID)
 	room.SendToPlayer(drawerID, choicesMsg)
 
 	// Notify others that drawer is choosing
@@ -322,7 +340,9 @@ func (m *Manager) startNextRound(room *Room) {
 }
 
 func (m *Manager) endRound(room *Room) {
+	log.Printf("[ROUND] endRound called, RoundStarted=%v", room.GameState.RoundStarted)
 	if !room.GameState.RoundStarted {
+		log.Printf("[ROUND] Round not started, skipping endRound")
 		return
 	}
 

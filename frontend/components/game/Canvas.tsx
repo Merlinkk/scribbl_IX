@@ -53,10 +53,12 @@ export default function Canvas() {
   const [brushSize, setBrushSize] = useState(BRUSH_SIZES[1]);
   const [tool, setTool] = useState<'brush' | 'eraser'>('brush');
 
-  const { isDrawer, phase } = useGameStore();
+  const { phase, playerId, currentDrawerId } = useGameStore();
   const { sendBinary, sendMessage, registerDrawHandler } = useWebSocket();
 
-  const canDraw = isDrawer() && phase === 'drawing';
+  // Compute isDrawer directly to avoid stale closure issues
+  const amIDrawer = playerId !== null && playerId === currentDrawerId;
+  const canDraw = amIDrawer && phase === 'drawing';
 
   // Set internal canvas resolution once
   useEffect(() => {

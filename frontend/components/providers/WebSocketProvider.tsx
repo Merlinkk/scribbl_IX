@@ -95,6 +95,8 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
 
           case EVENTS.NEXT_ROUND:
             // Sent to non-drawers: X is choosing a word
+            console.log('[WS] NEXT_ROUND received:', data);
+            console.log('[WS] Setting phase to choosing, drawerId:', data.drawerId);
             setCurrentDrawerId(data.drawerId);
             setCurrentRound(data.round);
             setWordHint('');
@@ -109,6 +111,8 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
 
           case EVENTS.ROUND_START:
             // Broadcast to ALL players after drawer picks word
+            console.log('[WS] ROUND_START received:', data);
+            console.log('[WS] Setting phase to drawing, round:', data.round, 'drawerId:', data.drawerId);
             setPhase('drawing');
             setCurrentRound(data.round);
             // Only update drawerId for non-drawers (drawer already set it in WORD_CHOICES)
@@ -126,9 +130,19 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
           case EVENTS.WORD_CHOICES: {
             // Only sent to the drawer — set self as drawer
             const myId = useGameStore.getState().playerId;
+            console.log('[WS] ========== WORD_CHOICES RECEIVED ==========');
+            console.log('[WS] Words:', data.words);
+            console.log('[WS] My playerId:', myId);
+            console.log('[WS] Setting currentDrawerId to:', myId);
+            console.log('[WS] Setting phase to: choosing');
             setCurrentDrawerId(myId);
             setWordChoices(data.words);
             setPhase('choosing');
+            // Verify state was set
+            setTimeout(() => {
+              const state = useGameStore.getState();
+              console.log('[WS] After WORD_CHOICES - phase:', state.phase, 'wordChoices:', state.wordChoices, 'isDrawer:', state.isDrawer());
+            }, 100);
             break;
           }
 
@@ -177,6 +191,7 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
             break;
 
           case EVENTS.ROUND_END:
+            console.log('[WS] ROUND_END received, setting phase to roundEnd');
             setPhase('roundEnd');
             setPlayers(data.scores);
             addMessage({

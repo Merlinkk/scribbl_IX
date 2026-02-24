@@ -1,6 +1,7 @@
 package room
 
 import (
+	"log"
 	"sync"
 
 	"github.com/anshul/scrrblIX/internal/models"
@@ -122,20 +123,32 @@ func (r *Room) GetPlayerList() []websocket.PlayerInfo {
 
 func (r *Room) Broadcast(msg interface{}) {
 	r.mu.RLock()
-	defer r.mu.RUnlock()
+	clients := make([]*websocket.Client, 0, len(r.Clients))
+	for _, c := range r.Clients {
+		clients = append(clients, c)
+	}
+	r.mu.RUnlock()
 
-	for _, client := range r.Clients {
+	for _, client := range clients {
 		client.SendMessage(msg)
 	}
 }
 
 func (r *Room) BroadcastExcept(msg interface{}, excludeID string) {
 	r.mu.RLock()
-	defer r.mu.RUnlock()
+	clients := make(map[string]*websocket.Client, len(r.Clients))
+	for id, c := range r.Clients {
+		clients[id] = c
+	}
+	r.mu.RUnlock()
 
-	for id, client := range r.Clients {
+	log.Printf("[ROOM] BroadcastExcept: excludeID=%s, totalClients=%d", excludeID, len(clients))
+	for id, client := range clients {
 		if id != excludeID {
+			log.Printf("[ROOM] Sending to client %s", id)
 			client.SendMessage(msg)
+		} else {
+			log.Printf("[ROOM] Skipping excluded client %s", id)
 		}
 	}
 }
@@ -162,10 +175,14 @@ func (r *Room) BroadcastBinaryExcept(data []byte, excludeID string) {
 
 func (r *Room) SendToPlayer(playerID string, msg interface{}) {
 	r.mu.RLock()
-	defer r.mu.RUnlock()
+	client := r.Clients[playerID]
+	r.mu.RUnlock()
 
-	if client, ok := r.Clients[playerID]; ok {
+	log.Printf("[ROOM] SendToPlayer: playerID=%s, clientExists=%v", playerID, client != nil)
+	if client != nil {
 		client.SendMessage(msg)
+	} else {
+		log.Printf("[ROOM] ERROR: Client %s not found in room!", playerID)
 	}
 }
 
