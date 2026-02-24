@@ -5,6 +5,7 @@ import { useGameStore } from '@/stores/gameStore';
 import { useWebSocket } from '@/components/providers/WebSocketProvider';
 import { COLORS, BRUSH_SIZES, EVENTS } from '@/lib/constants';
 import { motion } from 'framer-motion';
+import { Pencil, Eraser, Trash2, Eye } from 'lucide-react';
 
 interface Point { x: number; y: number; }
 
@@ -165,11 +166,17 @@ export default function Canvas() {
   return (
     <div className="w-full h-full flex flex-col">
       {/* Canvas area — fills available space, canvas scales via CSS */}
-      <div ref={containerRef} className="flex-1 relative flex items-center justify-center bg-gray-100 p-2 overflow-hidden">
+      <div ref={containerRef} className="flex-1 relative flex items-center justify-center bg-gray-50/50 p-4 overflow-hidden rounded-xl">
         <canvas
           ref={canvasRef}
-          className={`bg-white shadow-lg rounded-lg ${canDraw ? 'cursor-crosshair' : 'cursor-default'}`}
-          style={{ maxWidth: '100%', maxHeight: '100%', aspectRatio: `${CANVAS_W} / ${CANVAS_H}`, objectFit: 'contain' }}
+          className={`bg-white shadow-sm rounded-lg ${canDraw ? 'cursor-crosshair' : 'cursor-default'}`}
+          style={{ 
+            maxWidth: '100%', 
+            maxHeight: '100%', 
+            aspectRatio: `${CANVAS_W} / ${CANVAS_H}`, 
+            objectFit: 'contain',
+            touchAction: 'none'
+          }}
           onMouseDown={handleStart}
           onMouseMove={handleMove}
           onMouseUp={handleEnd}
@@ -179,9 +186,10 @@ export default function Canvas() {
           onTouchEnd={handleEnd}
         />
         {!canDraw && phase === 'drawing' && (
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 pointer-events-none">
-            <div className="bg-black/30 text-white px-4 py-1.5 rounded-full font-bold text-sm">
-              👀 Watch and guess!
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 pointer-events-none z-10">
+            <div className="bg-white text-black px-6 py-2 rounded-full font-black text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2 border-3 border-black uppercase tracking-wide">
+              <Eye size={20} className="text-black" strokeWidth={2.5} />
+              Watch and guess!
             </div>
           </div>
         )}
@@ -192,44 +200,57 @@ export default function Canvas() {
         <motion.div
           initial={{ y: 80, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="bg-white/95 border-t-4 border-pastel-purple p-3 flex flex-wrap items-center justify-center gap-4"
+          className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white border-3 border-black p-4 flex flex-wrap items-center justify-center gap-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-2xl z-10"
         >
-          <div className="flex gap-1 flex-wrap justify-center">
+          <div className="flex gap-2 flex-wrap justify-center">
             {COLORS.map((c) => (
               <button
                 key={c}
                 onClick={() => { setColor(c); setTool('brush'); }}
-                className={`w-8 h-8 rounded-lg border-2 transition-transform hover:scale-110 ${
-                  color === c && tool === 'brush' ? 'border-gray-800 scale-110 ring-2 ring-pastel-purple' : 'border-gray-300'
+                className={`w-8 h-8 rounded-full border-2 transition-all hover:scale-110 ${
+                  color === c && tool === 'brush' ? 'border-black scale-110 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]' : 'border-gray-200 hover:border-black'
                 }`}
                 style={{ backgroundColor: c }}
               />
             ))}
           </div>
 
-          <div className="flex gap-2 items-center border-l-2 border-gray-200 pl-4">
+          <div className="w-0.5 h-8 bg-black/10" />
+
+          <div className="flex gap-3 items-center">
             {BRUSH_SIZES.map((s) => (
               <button
                 key={s}
                 onClick={() => setBrushSize(s)}
-                className={`rounded-full bg-gray-800 transition-transform hover:scale-110 ${
-                  brushSize === s ? 'ring-2 ring-pastel-purple ring-offset-2' : ''
+                className={`rounded-full bg-black transition-all hover:scale-110 ${
+                  brushSize === s ? 'ring-2 ring-black ring-offset-2 scale-110' : 'opacity-40 hover:opacity-100'
                 }`}
-                style={{ width: s + 10, height: s + 10 }}
+                style={{ width: s + 8, height: s + 8 }}
               />
             ))}
           </div>
 
-          <div className="flex gap-2 border-l-2 border-gray-200 pl-4">
+          <div className="w-0.5 h-8 bg-black/10" />
+
+          <div className="flex gap-2">
             <button onClick={() => setTool('brush')}
-              className={`p-2 rounded-lg text-xl transition-colors ${tool === 'brush' ? 'bg-pastel-purple text-white' : 'bg-gray-100 hover:bg-gray-200'}`}
-            >✏️</button>
+              className={`p-2.5 rounded-xl transition-all border-2 ${tool === 'brush' ? 'bg-pastel-purple text-black border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]' : 'bg-transparent text-gray-400 border-transparent hover:bg-gray-100 hover:text-black'}`}
+              title="Brush"
+            >
+              <Pencil size={20} strokeWidth={2.5} />
+            </button>
             <button onClick={() => setTool('eraser')}
-              className={`p-2 rounded-lg text-xl transition-colors ${tool === 'eraser' ? 'bg-pastel-purple text-white' : 'bg-gray-100 hover:bg-gray-200'}`}
-            >🧹</button>
+              className={`p-2.5 rounded-xl transition-all border-2 ${tool === 'eraser' ? 'bg-gray-200 text-black border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]' : 'bg-transparent text-gray-400 border-transparent hover:bg-gray-100 hover:text-black'}`}
+              title="Eraser"
+            >
+              <Eraser size={20} strokeWidth={2.5} />
+            </button>
             <button onClick={handleClear}
-              className="p-2 rounded-lg text-xl bg-red-100 hover:bg-red-200 transition-colors"
-            >🗑️</button>
+              className="p-2.5 rounded-xl bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-600 border-2 border-transparent hover:border-red-200 transition-all ml-2"
+              title="Clear Canvas"
+            >
+              <Trash2 size={20} strokeWidth={2.5} />
+            </button>
           </div>
         </motion.div>
       )}

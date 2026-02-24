@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import confetti from 'canvas-confetti';
 import { useEffect } from 'react';
+import { Trophy, Crown, RotateCcw, Medal } from 'lucide-react';
 
 export default function GameOver() {
   const { players, resetGame } = useGameStore();
@@ -58,51 +59,55 @@ export default function GameOver() {
       <motion.div
         animate={{ rotate: [0, -10, 10, -10, 0] }}
         transition={{ duration: 0.5, delay: 0.5 }}
-        className="text-8xl mb-4"
+        className="flex justify-center mb-6"
       >
-        🏆
+        <div className="bg-pastel-yellow/20 p-6 rounded-full border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <Trophy className="w-20 h-20 text-yellow-500 fill-yellow-200 stroke-black stroke-2" />
+        </div>
       </motion.div>
 
-      <h1 className="text-3xl font-black text-pastel-purple-deep mb-2">Game Over!</h1>
+      <h1 className="text-4xl font-black text-black mb-2 tracking-tight uppercase drop-shadow-sm">Game Over!</h1>
       
       {winner && (
-        <div className="my-6">
-          <p className="text-gray-600 font-semibold mb-3">Winner</p>
+        <div className="my-8 bg-white p-6 rounded-2xl border-3 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+          <p className="text-gray-500 font-black uppercase tracking-widest text-xs mb-4">Winner</p>
           <motion.div 
             initial={{ y: 20 }}
             animate={{ y: 0 }}
             className="flex flex-col items-center gap-3"
           >
             <div className="relative">
-              <Avatar name={winner.name} size={96} showBlink />
+              <Avatar name={winner.name} size={96} showBlink className="border-4 border-black" />
               <motion.div 
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.3, type: 'spring' }}
-                className="absolute -top-4 -right-4 text-4xl"
+                className="absolute -top-6 -right-6 bg-white rounded-full p-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] border-3 border-black"
               >
-                👑
+                <Crown className="w-8 h-8 text-yellow-500 fill-yellow-200 stroke-black stroke-2" />
               </motion.div>
             </div>
-            <h2 className="text-2xl font-black text-pastel-purple-deep">{winner.name}</h2>
-            <p className="text-xl font-bold text-pastel-pink-dark">{winner.score} points</p>
+            <h2 className="text-3xl font-black text-black">{winner.name}</h2>
+            <div className="px-4 py-1 bg-pastel-pink/20 rounded-full border-2 border-black">
+              <p className="text-xl font-black text-black">{winner.score} points</p>
+            </div>
           </motion.div>
         </div>
       )}
 
-      <div className="space-y-2 mb-8 max-h-48 overflow-y-auto">
+      <div className="space-y-2 mb-8 max-h-48 overflow-y-auto custom-scrollbar pr-2">
         {sortedPlayers.slice(1).map((player, index) => (
           <motion.div
             key={player.id}
             initial={{ x: -30, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ delay: 0.5 + index * 0.1 }}
-            className="flex items-center gap-3 p-2 bg-white/50 rounded-lg"
+            className="flex items-center gap-4 p-3 bg-white rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[-2px] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all"
           >
-            <span className="font-bold text-gray-500 w-6">#{index + 2}</span>
-            <Avatar name={player.name} size={32} />
-            <span className="flex-1 font-semibold truncate text-left">{player.name}</span>
-            <span className="font-bold text-pastel-purple">{player.score} pts</span>
+            <span className="font-black text-gray-400 w-8">#{index + 2}</span>
+            <Avatar name={player.name} size={36} className="border-2 border-black" />
+            <span className="flex-1 font-bold truncate text-left text-black">{player.name}</span>
+            <span className="font-black text-black bg-gray-100 border border-black px-2 py-0.5 rounded-md">{player.score} pts</span>
           </motion.div>
         ))}
       </div>
@@ -111,8 +116,9 @@ export default function GameOver() {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={handlePlayAgain}
-        className="pastel-button btn-primary text-lg px-8 py-3"
+        className="pastel-button btn-primary text-lg px-8 py-4 w-full flex items-center justify-center gap-2"
       >
+        <RotateCcw size={20} strokeWidth={2.5} />
         Play Again
       </motion.button>
     </motion.div>

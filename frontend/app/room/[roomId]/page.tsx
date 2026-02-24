@@ -44,24 +44,24 @@ export default function RoomPage() {
   // Show loading while connecting or waiting for room info
   if (!connected || (!roomId && !isNew)) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center p-4">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="pastel-panel p-8 text-center"
+          className="pastel-panel p-8 text-center flex flex-col items-center"
         >
           <motion.div
-            animate={{ scale: [1, 1.2, 1] }}
+            animate={{ scale: [1, 1.2, 1], rotate: [0, 10, -10, 0] }}
             transition={{ duration: 1.5, repeat: Infinity }}
-            className="text-6xl mb-4"
+            className="text-6xl mb-6 bg-white p-4 rounded-full border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
           >
             🎮
           </motion.div>
-          <h2 className="text-xl font-bold text-pastel-purple-deep">
+          <h2 className="text-2xl font-black text-black uppercase tracking-wide">
             {!connected ? 'Connecting...' : isNew ? 'Creating room...' : 'Joining room...'}
           </h2>
-          <p className="text-gray-500 mt-2 text-sm">
-            {isNew ? '' : `Room: ${roomIdParam}`}
+          <p className="text-gray-600 font-bold mt-2 text-sm bg-white px-3 py-1 rounded-md border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] inline-block">
+            {isNew ? 'PLEASE WAIT' : `ROOM: ${roomIdParam}`}
           </p>
         </motion.div>
       </div>

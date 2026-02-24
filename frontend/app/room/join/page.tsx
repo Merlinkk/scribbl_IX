@@ -35,24 +35,24 @@ export default function JoinRoomPage() {
       >
         <button
           onClick={() => router.push('/')}
-          className="flex items-center gap-2 text-pastel-purple-deep hover:text-pastel-purple mb-6 transition-colors"
+          className="flex items-center gap-2 text-black font-bold hover:text-gray-600 mb-6 transition-colors border-2 border-black rounded-full px-4 py-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-y-[2px] bg-white w-fit"
         >
-          <ArrowLeft size={20} />
+          <ArrowLeft size={18} strokeWidth={3} />
           Back
         </button>
 
         <div className="flex flex-col items-center mb-6">
-          <Avatar name={playerName} size={80} showBlink />
-          <p className="mt-2 font-bold text-gray-700">{playerName}</p>
+          <Avatar name={playerName} size={80} showBlink className="border-3 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]" />
+          <p className="mt-3 font-black text-xl text-black bg-white border-2 border-black px-3 py-0.5 rounded-lg shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">{playerName}</p>
         </div>
 
-        <h1 className="text-2xl font-black text-center text-pastel-purple-deep mb-6">
+        <h1 className="text-3xl font-black text-center text-black mb-6 uppercase tracking-wide">
           Join a Room
         </h1>
 
-        <form onSubmit={handleJoin} className="space-y-4">
+        <form onSubmit={handleJoin} className="space-y-6">
           <div>
-            <label className="block text-sm font-semibold text-gray-600 mb-2">
+            <label className="block text-sm font-black text-gray-700 mb-2 uppercase tracking-wide">
               Room Code
             </label>
             <input
@@ -60,7 +60,7 @@ export default function JoinRoomPage() {
               value={roomCode}
               onChange={(e) => setRoomCode(e.target.value.trim())}
               placeholder="e.g. 66a0cedb"
-              className="w-full px-4 py-3 text-center text-2xl font-mono font-bold tracking-widest rounded-xl border-4 border-pastel-purple bg-white focus:outline-none focus:border-pastel-purple-deep transition-colors"
+              className="w-full px-4 py-3 text-center text-2xl font-mono font-black tracking-widest rounded-xl border-3 border-black bg-white focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all placeholder:text-gray-300 text-black uppercase"
               maxLength={36}
               autoFocus
             />
@@ -71,7 +71,7 @@ export default function JoinRoomPage() {
             whileTap={{ scale: 0.98 }}
             type="submit"
             disabled={!roomCode.trim()}
-            className="w-full pastel-button btn-primary py-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full pastel-button btn-primary py-4 text-xl border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
           >
             Join Room
           </motion.button>

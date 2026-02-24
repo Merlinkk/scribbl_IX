@@ -2,71 +2,94 @@
 
 import { motion } from 'framer-motion';
 import NameInput from '@/components/home/NameInput';
+import { Pencil, Palette, Gamepad2, Github, BookOpen, Info } from 'lucide-react';
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-8 relative overflow-hidden">
+    <div className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden">
       {/* Decorative background elements */}
       <motion.div 
-        animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
-        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-20 left-20 w-32 h-32 bg-pastel-pink/30 rounded-full blur-xl"
-      />
-      <motion.div 
-        animate={{ y: [0, 20, 0], rotate: [0, -5, 0] }}
-        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute bottom-20 right-20 w-40 h-40 bg-pastel-blue/30 rounded-full blur-xl"
-      />
-      <motion.div 
-        animate={{ scale: [1, 1.1, 1] }}
+        animate={{ y: [0, -30, 0], rotate: [0, 5, 0] }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-1/2 left-1/4 w-24 h-24 bg-pastel-yellow/30 rounded-full blur-xl"
-      />
+        className="absolute top-[10%] left-[10%] bg-white p-4 rounded-2xl border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-[-6deg]"
+      >
+        <Pencil className="w-16 h-16 text-pastel-purple-deep" strokeWidth={2.5} />
+      </motion.div>
+      
+      <motion.div 
+        animate={{ y: [0, 30, 0], rotate: [0, -5, 0] }}
+        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute bottom-[15%] right-[10%] bg-pastel-yellow-light p-5 rounded-full border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-[12deg]"
+      >
+        <Palette className="w-20 h-20 text-pastel-pink-dark" strokeWidth={2.5} />
+      </motion.div>
+      
+      <motion.div 
+        animate={{ scale: [1, 1.1, 1], rotate: [0, 10, 0] }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-[20%] right-[20%] bg-pastel-blue-light p-4 rounded-xl border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-[3deg]"
+      >
+        <Gamepad2 className="w-12 h-12 text-pastel-green-dark" strokeWidth={2.5} />
+      </motion.div>
 
       {/* Main Content */}
       <motion.div 
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="z-10 w-full max-w-4xl flex flex-col items-center"
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="z-10 w-full max-w-5xl flex flex-col items-center"
       >
-        <motion.h1 
-          className="text-6xl md:text-8xl font-black text-white drop-shadow-[4px_4px_0_rgba(177,156,217,1)] mb-4 tracking-tight"
-          initial={{ scale: 0.5, opacity: 0 }}
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: "spring", stiffness: 200, damping: 15 }}
+          className="mb-8 relative"
         >
-          Scrrbl<span className="text-pastel-pink-dark">IX</span>
-        </motion.h1>
+          <h1 className="text-8xl md:text-9xl font-black text-white tracking-tighter drop-shadow-[4px_4px_0px_rgba(0,0,0,1)]" style={{ WebkitTextStroke: '3px black' }}>
+            Scrrbl<span className="text-pastel-pink-dark">IX</span>
+          </h1>
+          <motion.div 
+            className="absolute -top-6 -right-10 bg-pastel-yellow p-2 rounded-lg border-3 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+            animate={{ rotate: [0, 10, 0] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          >
+            <Pencil className="w-8 h-8 text-black" />
+          </motion.div>
+        </motion.div>
         
         <motion.p 
-          className="text-xl md:text-2xl text-pastel-purple-deep font-bold mb-12 text-center max-w-lg"
+          className="text-xl md:text-2xl text-gray-800 font-bold mb-12 text-center max-w-lg leading-relaxed tracking-wide bg-white/60 p-4 rounded-xl border-2 border-black/10 backdrop-blur-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
         >
-          Draw, guess, and have fun with friends!
+          The ultimate multiplayer drawing & guessing game. <br/>
+          <span className="text-pastel-purple-deep font-black">Draw</span>, <span className="text-pastel-pink-dark font-black">Guess</span>, and <span className="text-pastel-green-dark font-black">Win!</span>
         </motion.p>
 
-        <div className="pastel-panel p-8 md:p-12 w-full max-w-md flex flex-col items-center gap-8 relative">
-          {/* Cute corner decorations */}
-          <div className="absolute -top-4 -left-4 w-12 h-12 bg-pastel-yellow rounded-full border-4 border-white shadow-md flex items-center justify-center text-2xl animate-bounce-slow">✏️</div>
-          <div className="absolute -bottom-4 -right-4 w-12 h-12 bg-pastel-green rounded-full border-4 border-white shadow-md flex items-center justify-center text-2xl animate-bounce-slow" style={{ animationDelay: '1s' }}>🎨</div>
-          
+        <div className="w-full flex justify-center">
           <NameInput />
-          
         </div>
 
         {/* Footer links */}
         <motion.div 
-          className="mt-16 flex gap-8 text-pastel-purple-deep font-semibold"
+          className="mt-16 flex flex-wrap justify-center gap-6 text-gray-700 font-bold"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
         >
-          <a href="#" className="hover:text-pastel-pink-dark transition-colors">How to Play</a>
-          <a href="#" className="hover:text-pastel-pink-dark transition-colors">About</a>
-          <a href="#" className="hover:text-pastel-pink-dark transition-colors">Github</a>
+          <a href="#" className="flex items-center gap-2 hover:text-black transition-all px-5 py-2.5 rounded-full bg-white border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[-2px] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-y-[0px] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+            <BookOpen size={20} strokeWidth={2.5} />
+            How to Play
+          </a>
+          <a href="#" className="flex items-center gap-2 hover:text-black transition-all px-5 py-2.5 rounded-full bg-white border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[-2px] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-y-[0px] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+            <Info size={20} strokeWidth={2.5} />
+            About
+          </a>
+          <a href="#" className="flex items-center gap-2 hover:text-black transition-all px-5 py-2.5 rounded-full bg-white border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[-2px] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-y-[0px] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+            <Github size={20} strokeWidth={2.5} />
+            Github
+          </a>
         </motion.div>
       </motion.div>
     </div>
