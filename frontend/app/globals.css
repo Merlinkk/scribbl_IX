@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+:root {
+  --background: #E6E6FA;
+  --foreground: #4B0082;
+  --panel: rgba(255, 255, 255, 0.85);
+  --border: #B19CD9;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #2D2A4A;
+    --foreground: #E6E6FA;
+    --panel: rgba(45, 42, 74, 0.85);
+    --border: #7B68EE;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+  background-image: 
+    linear-gradient(45deg, #DCD0FF 25%, transparent 25%), 
+    linear-gradient(-45deg, #DCD0FF 25%, transparent 25%), 
+    linear-gradient(45deg, transparent 75%, #DCD0FF 75%), 
+    linear-gradient(-45deg, transparent 75%, #DCD0FF 75%);
+  background-size: 40px 40px;
+  background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
+}
+
+@layer components {
+  .pastel-panel {
+    @apply bg-white/90 backdrop-blur-sm rounded-xl border-4 border-pastel-purple-dark shadow-[4px_4px_0px_0px_rgba(177,156,217,1)];
+  }
+  
+  .pastel-button {
+    @apply px-6 py-2 rounded-full font-bold transition-all transform active:scale-95 hover:-translate-y-1 border-b-4;
+  }
+  
+  .btn-primary {
+    @apply bg-pastel-purple-deep text-white border-purple-800 hover:brightness-110;
+  }
+  
+  .btn-secondary {
+    @apply bg-pastel-pink text-white border-pastel-pink-dark hover:brightness-110;
+  }
+  
+  .btn-accent {
+    @apply bg-pastel-green-dark text-white border-green-600 hover:brightness-110;
+  }
+
+  .pixel-shadow {
+    box-shadow: 4px 4px 0px 0px rgba(0,0,0,0.1);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+  border-radius: 5px;
+}
+ 
+::-webkit-scrollbar-thumb {
+  background: #B19CD9; 
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #7B68EE; 
+}
